@@ -70,9 +70,6 @@ namespace Authentication.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
 
-                await _context.SaveChangesAsync();
-                return RedirectToAction("UserHomePage","UserAccounts");
-
             }
             
             return View("UserHomePage", userAccount);

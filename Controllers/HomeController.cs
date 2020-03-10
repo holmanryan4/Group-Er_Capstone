@@ -9,6 +9,8 @@ using Authentication.Models;
 using Activity = System.Diagnostics.Activity;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System.Net.Mail;
+using System.Net;
 
 namespace Authentication.Controllers
 {
@@ -32,6 +34,48 @@ namespace Authentication.Controllers
         }
         public IActionResult About()
         {
+            return View();
+        }
+        public IActionResult SendEmail()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult SendEmail(string receiver, string subject, string message)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var senderEmail = new MailAddress("Enter Your Email", "Enter Name");
+                    var receiverEmail = new MailAddress("help.grouper@gmail.com", "Grouper Support");
+                    var password = "Your Email Password here";
+                    var sub = subject;
+                    var body = message;
+                    var smtp = new SmtpClient
+                    {
+                        Host = "smtp.gmail.com",
+                        Port = 587,
+                        EnableSsl = true,
+                        DeliveryMethod = SmtpDeliveryMethod.Network,
+                        UseDefaultCredentials = false,
+                        Credentials = new NetworkCredential(senderEmail.Address, password)
+                    };
+                    using (var mess = new MailMessage(senderEmail, receiverEmail)
+                    {
+                        Subject = subject,
+                        Body = body
+                    })
+                    {
+                        smtp.Send(mess);
+                    }
+                    return View();
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.Error = "Unexpected Error";
+            }
             return View();
         }
         public async Task<IActionResult> ContactAsync()
