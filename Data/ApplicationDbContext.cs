@@ -14,7 +14,7 @@ namespace Authentication.Data
         {
         }
         public DbSet<Authentication.Models.Address> Address { get; set; }
-        public DbSet<Authentication.Models.Memory> Memory { get; set; }
+        
         public DbSet<Authentication.Models.Payment> Payment { get; set; }
         public DbSet<Authentication.Models.Transactions> Transactions { get; set; }
         public DbSet<Authentication.Models.UserAccount> UserAccount { get; set; }

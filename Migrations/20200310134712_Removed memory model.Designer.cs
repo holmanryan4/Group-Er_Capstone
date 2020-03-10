@@ -4,14 +4,16 @@ using Authentication.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Authentication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200310134712_Removed memory model")]
+    partial class Removedmemorymodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,6 +84,21 @@ namespace Authentication.Migrations
                     b.HasIndex("EventId");
 
                     b.ToTable("Group");
+                });
+
+            modelBuilder.Entity("Authentication.Models.Memory", b =>
+                {
+                    b.Property<int>("MemoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("Balance")
+                        .HasColumnType("float");
+
+                    b.HasKey("MemoryId");
+
+                    b.ToTable("Memory");
                 });
 
             modelBuilder.Entity("Authentication.Models.Payment", b =>
@@ -172,6 +189,9 @@ namespace Authentication.Migrations
                     b.Property<double>("Balance")
                         .HasColumnType("float");
 
+                    b.Property<int>("MemoryId")
+                        .HasColumnType("int");
+
                     b.Property<int>("PaymentId")
                         .HasColumnType("int");
 
@@ -179,6 +199,8 @@ namespace Authentication.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("WalletId");
+
+                    b.HasIndex("MemoryId");
 
                     b.HasIndex("PaymentId");
 
@@ -419,6 +441,12 @@ namespace Authentication.Migrations
 
             modelBuilder.Entity("Authentication.Models.Wallet", b =>
                 {
+                    b.HasOne("Authentication.Models.Memory", "Memory")
+                        .WithMany()
+                        .HasForeignKey("MemoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Authentication.Models.Payment", "Payment")
                         .WithMany()
                         .HasForeignKey("PaymentId")
