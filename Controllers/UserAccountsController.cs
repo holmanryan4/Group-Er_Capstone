@@ -19,10 +19,10 @@ namespace Authentication.Controllers
         {
             _context = context;
         }
-        
+
 
         // GET: UserAccounts/Index
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var applicationDbContext = _context.UserAccount.Include(c => c.Address).Include(c => c.FirstName).Include(c => c.LastName);
@@ -68,11 +68,11 @@ namespace Authentication.Controllers
                 userAccount.Wallet = new Wallet() { Balance = 0 };
                 userAccount.Wallet.Payment = new Payment() { CCNumber = 0 };
                 userAccount.Wallet.Transactions = new Transactions() { SentToWallet = false };
-
                 _context.UserAccount.Add(userAccount);
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction ("UserHomePAge", "UserAccounts");
+
 
             }
             ViewData["UserId"] = new SelectList(_context.Set<UserAccount>(), "AddressID", "AddressID", userAccount.AddressID);
