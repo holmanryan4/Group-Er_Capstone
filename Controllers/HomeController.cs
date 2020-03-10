@@ -49,7 +49,7 @@ namespace Authentication.Controllers
                 {
                     var senderEmail = new MailAddress("Enter Your Email", "Enter Name");
                     var receiverEmail = new MailAddress("help.grouper@gmail.com", "Grouper Support");
-                    var password = "Your Email Password here";
+                    var password = "Deploy@2019";
                     var sub = subject;
                     var body = message;
                     var smtp = new SmtpClient
