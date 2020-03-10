@@ -48,7 +48,7 @@ namespace Authentication.Controllers
                 if (ModelState.IsValid)
                 {
                     var senderEmail = new MailAddress("Enter Your Email", "Enter Name");
-                    var receiverEmail = new MailAddress("help.grouper@gmail.com", "Grouper Support");
+                    var receiverEmail = new MailAddress("dorianhaley1992@gmail.com", "Grouper Support");
                     var password = "Deploy@2019";
                     var sub = subject;
                     var body = message;
