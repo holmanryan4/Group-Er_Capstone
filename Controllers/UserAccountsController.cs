@@ -27,7 +27,7 @@ namespace Authentication.Controllers
             string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var applicationDbContext = _context.UserAccount.Include(c => c.Address).Include(c => c.FirstName).Include(c => c.LastName);
             var singleUser = applicationDbContext.Where(c => c.UserName == userId); //Nick Helped, everythings still on fire tho.
-            return View(await singleUser.ToListAsync());
+            return View(singleUser.ToListAsync());
         }
 
         // GET: UserAccounts/Details/5
@@ -67,7 +67,7 @@ namespace Authentication.Controllers
             {
                 _context.Add(userAccount);
 
-                await _context.SaveChangesAsync();
+                _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
 
             }
