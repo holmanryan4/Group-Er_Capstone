@@ -19,10 +19,10 @@ namespace Authentication.Controllers
         {
             _context = context;
         }
-        
+
 
         // GET: UserAccounts/Index
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var applicationDbContext = _context.UserAccount.Include(c => c.Address).Include(c => c.FirstName).Include(c => c.LastName);
@@ -61,17 +61,23 @@ namespace Authentication.Controllers
         // POST: UserAccounts/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,PhoneNumber,AddressID,WalletId")]UserAccount userAccount)
+        public async Task<IActionResult> Create(UserAccount userAccount)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(userAccount);
+                userAccount.Wallet = new Wallet() { Balance = 0 };
+                userAccount.Wallet.Payment = new Payment() { CCNumber = 0 };
+                userAccount.Wallet.Transactions = new Transactions() { SentToWallet = false };
+                _context.UserAccount.Add(userAccount);
 
-                _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                await _context.SaveChangesAsync();
+                return RedirectToAction ("UserHomePAge", "UserAccounts");
+
 
             }
-            
+            ViewData["UserId"] = new SelectList(_context.Set<UserAccount>(), "AddressID", "AddressID", userAccount.AddressID);
+            ViewData["UserId"] = new SelectList(_context.Set<Wallet>(), "WalletId", "WalletId", userAccount.WalletId);
+            ViewData["UserId"] = new SelectList(_context.Set<Payment>(), "PaymentId", "PaymentId", userAccount.Wallet.PaymentId);
             return View("UserHomePage", userAccount);
         }
 
