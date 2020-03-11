@@ -9,6 +9,7 @@ namespace Authentication.Models
 {
     public class UserGroup
     {
+        
        [ForeignKey("UserAccount")]
         public int UserAccountId { get; set; }
         public virtual UserAccount UserAccount { get; set; }
