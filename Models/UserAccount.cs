@@ -23,10 +23,9 @@ namespace Authentication.Models
         public int WalletId { get; set; }
         public Wallet Wallet { get; set; }
 
-        [ForeignKey("Group")]
-        public int? GroupId { get; set; }
-        public Group Group { get; set; }
-        public string UserName { get; set; }
+
+        public virtual ICollection<UserGroup> UserGroups { get; set; }
+
 
         //[ForeignKey("Activity")]
         //public int EventId { get; set; }
