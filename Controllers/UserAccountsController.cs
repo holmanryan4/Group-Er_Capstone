@@ -72,10 +72,11 @@ namespace Authentication.Controllers
                 //var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier)
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var user = _userManager.FindByIdAsync(userId).Result;
+                userAccount.UserName = user.Email;
                 userAccount.Wallet = new Wallet() { Balance = 0 };
                 userAccount.Wallet.Payment = new Payment() { CCNumber = 0 };
                 userAccount.Wallet.Transactions = new Transactions() { SentToWallet = false };
-                userAccount.UserName = user.Email;
+
 
                 _context.UserAccount.Add(userAccount);
        
@@ -171,10 +172,12 @@ namespace Authentication.Controllers
         {
             return _context.UserAccount.Any(e => e.UserId == id);
         }
-        public IActionResult UserHomePage(int? id)
+        public IActionResult UserHomePage()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if(userId == null)
+            var user = _userManager.FindByIdAsync(userId).Result;
+            var userAccount = user.Email;
+            if (userAccount == null)
             {
                 return Create();
             }
@@ -184,7 +187,7 @@ namespace Authentication.Controllers
                 .Include(g => g.Group)
                 .Include(w => w.Wallet)
                 .Include(p => p.Wallet.Payment)
-                .Where(x => x.UserName == userId).FirstOrDefaultAsync();
+                .Where(x => x.UserName == userAccount).FirstOrDefaultAsync();
             if (User == null)
             {
                 return Create();
