@@ -4,14 +4,16 @@ using Authentication.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Authentication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200311152158_addedjunctiontablemodelforusergroup")]
+    partial class addedjunctiontablemodelforusergroup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,9 +135,6 @@ namespace Authentication.Migrations
                     b.Property<bool>("SentToWallet")
                         .HasColumnType("bit");
 
-                    b.Property<double>("TransAmount")
-                        .HasColumnType("float");
-
                     b.HasKey("TransactionId");
 
                     b.ToTable("Transactions");
@@ -153,11 +152,6 @@ namespace Authentication.Migrations
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
-
-
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
-
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -439,7 +433,6 @@ namespace Authentication.Migrations
 
                     b.HasOne("Authentication.Models.Wallet", "Wallet")
                         .WithMany()
-
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -452,7 +445,6 @@ namespace Authentication.Migrations
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
 
                     b.HasOne("Authentication.Models.UserAccount", "UserAccount")
                         .WithMany("UserGroups")

@@ -13,31 +13,35 @@ using System.Net.Mail;
 using System.Net;
 using Authentication.Data;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace Authentication.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
         ApplicationDbContext _context;
-        public HomeController(ILogger<HomeController> logger,ApplicationDbContext options)
+        public HomeController(ILogger<HomeController> logger,ApplicationDbContext options, UserManager<IdentityUser> userManager)
         {
             _context = options;
             _logger = logger;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
         {
             var user = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userAcct = _context.UserAccount.Where(s => s.UserId.ToString() == user).FirstOrDefault();
-            
-            
+            var userId = _userManager.FindByIdAsync(user).Result;
+            var userAcct = userId;
+                       
             if (User.IsInRole("UserAccount") && userAcct == null)
             {
-                return RedirectToAction("Create", "Home");
+                return RedirectToAction("Create", "UserAccounts");
             }
             else if (userAcct != null)
             {
+
                 return RedirectToAction("UserHomePage", "UserAccounts");
             }
             else
