@@ -154,10 +154,8 @@ namespace Authentication.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-
-                    b.Property<int?>("GroupId")
+                    b.Property<int>("GroupId")
                         .HasColumnType("int");
-
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -174,6 +172,8 @@ namespace Authentication.Migrations
                     b.HasKey("UserId");
 
                     b.HasIndex("AddressID");
+
+                    b.HasIndex("GroupId");
 
                     b.HasIndex("WalletId");
 
@@ -437,9 +437,14 @@ namespace Authentication.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Authentication.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Authentication.Models.Wallet", "Wallet")
                         .WithMany()
-
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -452,7 +457,6 @@ namespace Authentication.Migrations
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
 
                     b.HasOne("Authentication.Models.UserAccount", "UserAccount")
                         .WithMany("UserGroups")

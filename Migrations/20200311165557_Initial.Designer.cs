@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Authentication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200311125447_UpdateUserModel")]
-    partial class UpdateUserModel
+    [Migration("20200311165557_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,6 +34,21 @@ namespace Authentication.Migrations
                     b.HasKey("ActivityId");
 
                     b.ToTable("Activity");
+                });
+
+            modelBuilder.Entity("Authentication.Models.ActivityTrnsaction", b =>
+                {
+                    b.Property<int>("TransationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("Purchases")
+                        .HasColumnType("float");
+
+                    b.HasKey("TransationId");
+
+                    b.ToTable("ActivityTrnsaction");
                 });
 
             modelBuilder.Entity("Authentication.Models.Address", b =>
@@ -67,21 +82,21 @@ namespace Authentication.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ActivityId")
+                        .HasColumnType("int");
+
                     b.Property<double>("Balance")
                         .HasColumnType("float");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EventId")
-                        .HasColumnType("int");
-
                     b.Property<string>("GroupName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("GroupId");
 
-                    b.HasIndex("EventId");
+                    b.HasIndex("ActivityId");
 
                     b.ToTable("Group");
                 });
@@ -141,7 +156,7 @@ namespace Authentication.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("GroupId")
+                    b.Property<int>("GroupId")
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
@@ -151,7 +166,7 @@ namespace Authentication.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("WalletId")
                         .HasColumnType("int");
@@ -162,11 +177,24 @@ namespace Authentication.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.HasIndex("UserName");
-
                     b.HasIndex("WalletId");
 
                     b.ToTable("UserAccount");
+                });
+
+            modelBuilder.Entity("Authentication.Models.UserGroup", b =>
+                {
+                    b.Property<int>("UserAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserAccountId", "GroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("UserGroups");
                 });
 
             modelBuilder.Entity("Authentication.Models.Wallet", b =>
@@ -398,7 +426,7 @@ namespace Authentication.Migrations
                 {
                     b.HasOne("Authentication.Models.Activity", "Activity")
                         .WithMany()
-                        .HasForeignKey("EventId")
+                        .HasForeignKey("ActivityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -413,15 +441,28 @@ namespace Authentication.Migrations
 
                     b.HasOne("Authentication.Models.Group", "Group")
                         .WithMany()
-                        .HasForeignKey("GroupId");
-
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("UserName");
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Authentication.Models.Wallet", "Wallet")
                         .WithMany()
                         .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Authentication.Models.UserGroup", b =>
+                {
+                    b.HasOne("Authentication.Models.Group", "Group")
+                        .WithMany("UserGroups")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Authentication.Models.UserAccount", "UserAccount")
+                        .WithMany("UserGroups")
+                        .HasForeignKey("UserAccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -2,7 +2,7 @@
 
 namespace Authentication.Migrations
 {
-    public partial class RemovedAddressIDPrimaryKey : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
