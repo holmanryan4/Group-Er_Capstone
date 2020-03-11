@@ -11,21 +11,39 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Net.Mail;
 using System.Net;
+using Authentication.Data;
+using System.Security.Claims;
 
 namespace Authentication.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        ApplicationDbContext _context;
+        public HomeController(ILogger<HomeController> logger,ApplicationDbContext options)
         {
+            _context = options;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var user = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userAcct = _context.UserAccount.Where(s => s.UserId.ToString() == user).FirstOrDefault();
+            
+            
+            if (User.IsInRole("UserAccount") && userAcct == null)
+            {
+                return RedirectToAction("Create", "Home");
+            }
+            else if (userAcct != null)
+            {
+                return RedirectToAction("UserHomePage", "UserAccounts");
+            }
+            else
+            {
+                return View();
+            }
         }
 
         public IActionResult Privacy()

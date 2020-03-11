@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Authentication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200310134712_Removed memory model")]
-    partial class Removedmemorymodel
+    [Migration("20200311125447_UpdateUserModel")]
+    partial class UpdateUserModel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -86,21 +86,6 @@ namespace Authentication.Migrations
                     b.ToTable("Group");
                 });
 
-            modelBuilder.Entity("Authentication.Models.Memory", b =>
-                {
-                    b.Property<int>("MemoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Balance")
-                        .HasColumnType("float");
-
-                    b.HasKey("MemoryId");
-
-                    b.ToTable("Memory");
-                });
-
             modelBuilder.Entity("Authentication.Models.Payment", b =>
                 {
                     b.Property<int>("PaymentId")
@@ -135,6 +120,9 @@ namespace Authentication.Migrations
                     b.Property<bool>("SentToWallet")
                         .HasColumnType("bit");
 
+                    b.Property<double>("TransAmount")
+                        .HasColumnType("float");
+
                     b.HasKey("TransactionId");
 
                     b.ToTable("Transactions");
@@ -153,7 +141,7 @@ namespace Authentication.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GroupId")
+                    b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
@@ -163,7 +151,7 @@ namespace Authentication.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("WalletId")
                         .HasColumnType("int");
@@ -173,6 +161,8 @@ namespace Authentication.Migrations
                     b.HasIndex("AddressID");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("UserName");
 
                     b.HasIndex("WalletId");
 
@@ -189,9 +179,6 @@ namespace Authentication.Migrations
                     b.Property<double>("Balance")
                         .HasColumnType("float");
 
-                    b.Property<int>("MemoryId")
-                        .HasColumnType("int");
-
                     b.Property<int>("PaymentId")
                         .HasColumnType("int");
 
@@ -199,8 +186,6 @@ namespace Authentication.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("WalletId");
-
-                    b.HasIndex("MemoryId");
 
                     b.HasIndex("PaymentId");
 
@@ -428,9 +413,11 @@ namespace Authentication.Migrations
 
                     b.HasOne("Authentication.Models.Group", "Group")
                         .WithMany()
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GroupId");
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("UserName");
 
                     b.HasOne("Authentication.Models.Wallet", "Wallet")
                         .WithMany()
@@ -441,12 +428,6 @@ namespace Authentication.Migrations
 
             modelBuilder.Entity("Authentication.Models.Wallet", b =>
                 {
-                    b.HasOne("Authentication.Models.Memory", "Memory")
-                        .WithMany()
-                        .HasForeignKey("MemoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Authentication.Models.Payment", "Payment")
                         .WithMany()
                         .HasForeignKey("PaymentId")

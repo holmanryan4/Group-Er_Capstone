@@ -84,6 +84,10 @@ namespace Authentication.Areas.Identity.Pages.Account
 
                     return RedirectToAction("Create", "UserAccounts");
                 } 
+               
+
+                _logger.LogInformation("User created a new account with password.");
+
             }
             // If we got this far, something failed, redisplay form
             return Page();

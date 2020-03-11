@@ -8,16 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using Authentication.Data;
 using Authentication.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace Authentication.Controllers
 {
     public class UserAccountsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public UserAccountsController(ApplicationDbContext context)
+        public UserAccountsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
 
@@ -55,23 +58,37 @@ namespace Authentication.Controllers
         {
             ViewData["AddressID"] = new SelectList(_context.Address, "AddressId", "AddressId");
             ViewData["WalletId"] = new SelectList(_context.Set<Wallet>(), "WalletId", "WalletId");
+            ViewData["IdentityUserId"] = new SelectList(_context.Set<UserAccount>(), "ID", "ID");
             return View();
         }
 
         // POST: UserAccounts/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,PhoneNumber,AddressID,WalletId")]UserAccount userAccount)
+        public async Task<IActionResult> Create(UserAccount userAccount)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(userAccount);
+                //var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier)
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = _userManager.FindByIdAsync(userId).Result;
+                userAccount.Wallet = new Wallet() { Balance = 0 };
+                userAccount.Wallet.Payment = new Payment() { CCNumber = 0 };
+                userAccount.Wallet.Transactions = new Transactions() { SentToWallet = false };
+                userAccount.UserName = user.Email;
+
+                _context.UserAccount.Add(userAccount);
+       
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction ("UserHomePAge", "UserAccounts");
+
 
             }
-            
+            ViewData["UserId"] = new SelectList(_context.Set<UserAccount>(), "AddressID", "AddressID", userAccount.AddressID);
+            ViewData["UserId"] = new SelectList(_context.Set<Wallet>(), "WalletId", "WalletId", userAccount.WalletId);
+            ViewData["UserId"] = new SelectList(_context.Set<Payment>(), "PaymentId", "PaymentId", userAccount.Wallet.PaymentId);
+            ViewData["IdentityUserId"] = new SelectList(_context.Set<UserAccount>(), "ID", "ID");
             return View("UserHomePage", userAccount);
         }
 
@@ -154,9 +171,26 @@ namespace Authentication.Controllers
         {
             return _context.UserAccount.Any(e => e.UserId == id);
         }
-        public IActionResult UserHomePage()
+        public IActionResult UserHomePage(int? id)
         {
-            return View();
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(userId == null)
+            {
+                return Create();
+            }
+
+            var User = _context.UserAccount
+                .Include(u => u.Address)
+                .Include(g => g.Group)
+                .Include(w => w.Wallet)
+                .Include(p => p.Wallet.Payment)
+                .Where(x => x.UserName == userId).FirstOrDefaultAsync();
+            if (User == null)
+            {
+                return Create();
+            }
+            
+            return View(User);
         }
     }
 }
