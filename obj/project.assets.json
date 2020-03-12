@@ -8975,11 +8975,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Dorians PC\\Desktop\\DevCode\\Week 8\\Grouper Capstone\\Group-Er_Capstone\\Grouper\\Authentication.csproj",
+      "projectUniqueName": "C:\\Users\\Dorians PC\\Desktop\\DevCode\\Week 8\\Grouper Capstone\\Group-Er_Capstone\\Grouper\\Group-Er_Capstone\\Authentication.csproj",
       "projectName": "Authentication",
-      "projectPath": "C:\\Users\\Dorians PC\\Desktop\\DevCode\\Week 8\\Grouper Capstone\\Group-Er_Capstone\\Grouper\\Authentication.csproj",
+      "projectPath": "C:\\Users\\Dorians PC\\Desktop\\DevCode\\Week 8\\Grouper Capstone\\Group-Er_Capstone\\Grouper\\Group-Er_Capstone\\Authentication.csproj",
       "packagesPath": "C:\\Users\\Dorians PC\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Dorians PC\\Desktop\\DevCode\\Week 8\\Grouper Capstone\\Group-Er_Capstone\\Grouper\\obj\\",
+      "outputPath": "C:\\Users\\Dorians PC\\Desktop\\DevCode\\Week 8\\Grouper Capstone\\Group-Er_Capstone\\Grouper\\Group-Er_Capstone\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Dorians PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
